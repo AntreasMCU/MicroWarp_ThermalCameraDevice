@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::sync::mpsc::Receiver;
+// use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex, mpsc};
 use std::thread;
 use std::io::{Read, Write, ErrorKind, Error as ioError};
@@ -7,6 +7,13 @@ use std::net::{SocketAddr, TcpStream};
 use std::time::Duration;
 use log::error; //debug,error, warn, log_enabled, info, trace, Level};
 
+
+/*--------------------------------------------------------------------
+            TCP Client is a rather straignt forward library.
+            Used to receive / transmit data from a server to 
+            a Receiver / Sender MPSC channel.
+            No logic is implemented on TCP Client
+----------------------------------------------------------------------- */
 pub struct TcpClient{
     connection_address: SocketAddr,
     from_client_rx: Option<mpsc::Receiver<Vec<u8>>>,

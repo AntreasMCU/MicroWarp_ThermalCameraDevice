@@ -5,11 +5,19 @@ mod configuration_struct;
 
 
 // use service_manager::ServiceManager;
+#[macro_use]
+extern crate lazy_static;
+extern crate serde;
+extern crate serde_json;
+
 
 use log::{trace, info, warn, error}; //debug,error, warn, log_enabled, info, trace, Level};
 use env_logger::Env;
 use std::sync::{Arc, Mutex};
 use service_manager::ServiceManager;
+
+
+
 
 fn main() {
 
@@ -29,13 +37,15 @@ fn main() {
             Set up BackDoor Connection
     ------------------------------------------------------*/
 
+    
+    //This will be passed from a json config file
     let device_name = String::from("ThermalCameraDevice");
     let thermal_manager = Arc::new(Mutex::new(ServiceManager::new(&device_name).expect("Unable to attain serviceManager")));
 
     let mut tre = thermal_manager
-        .lock()
-        .expect("nothing to be said")
-        .start();
+                    .lock()
+                    .expect("nothing to be said")
+                    .start();
 
     // service_manager = ServiceManager::new(device_name);
 }

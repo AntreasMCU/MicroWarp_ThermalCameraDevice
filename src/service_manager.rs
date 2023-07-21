@@ -1,16 +1,23 @@
 
 use std::error::Error;
 use std::thread;
-use std::sync::{mpsc, Mutex, Arc};
+use std::sync::mpsc; //{mpsc, Mutex, Arc};
 use std::net::SocketAddr;
-use std::thread::JoinHandle;
+// use std::thread::JoinHandle;
 use log::{error, info}; //debug,error, warn, log_enabled, info, trace, Level};
 use std::time::Duration;
 
 use  crate::tcp_client;
 
 
+/*--------------------------------------------------------------------
+            Service Manager is a wrapper of TCP Client.
+        Add a name (String) and a default server socket to the
+        TCP Client.
 
+        TODO: Maybe add an ARC wrapper so we can move the service 
+        manager around
+----------------------------------------------------------------------- */
 pub struct ServiceManager{
     device_name: String,
     // manager_rx: mpsc::Receiver<u8>,
@@ -45,10 +52,16 @@ impl ServiceManager {
         self.manager_tx = Some(self.tcp_client.get_sender().expect("unable to get receiver from tcp client"));
 
         let tx = self.manager_tx.take().unwrap();
+        let mut counter = 40;
         
         loop{
             // "Hello mr Manager".as_bytes().to_vec()
-            tx.send(self.device_name.as_bytes().to_vec()).expect("Unable to send msg to The manager");
+            let mut full_msg = self.device_name.as_bytes().to_vec();
+            full_msg.push(counter as u8);
+
+            counter += 1;
+            info!("{:?}", full_msg);
+            tx.send(full_msg).expect("Unable to push msg");
 
             match manager_rx.recv() {
                 Ok(data) => {
